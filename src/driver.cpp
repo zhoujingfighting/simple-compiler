@@ -14,20 +14,22 @@ static cl::opt<std::string> inputFilename(cl::Positional,
                                           cl::desc("<input toy file>"),
                                           cl::init("-"),
                                           cl::value_desc("filename"));
+
 int parseInputFile(llvm::StringRef filename) {
   llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> fileOrErr =
       llvm::MemoryBuffer::getFileOrSTDIN(filename);
   if (std::error_code ec = fileOrErr.getError()) {
-    llvm::errs() << "Could not open input file: " << ec.message() << "\n";
+    llvm::errs() << "Could not open input file: "
+                 << "'" << filename << "' , " << ec.message() << "\n";
     return -1;
   }
   auto buffer = fileOrErr.get()->getBuffer();
   LexerBuffer lexer(buffer.begin(), buffer.end(), std::string(filename));
-//   Parser parser(lexer);
-//   return parser.parseModule();
+  Parser parser(lexer);
+  return parser.parseModule();
 }
 int main(int argc, const char *const *argv) {
-    cl::ParseCommandLineOptions(argc, argv, "Toy compiler commandline options\n");
-
-    return 0;
+  cl::ParseCommandLineOptions(argc, argv, "Toy compiler commandline options\n");
+  parseInputFile(inputFilename);
+  return 0;
 }

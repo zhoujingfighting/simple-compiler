@@ -16,4 +16,6 @@ This is a toy compiler, will include
 
 `ninja -C build test`
 
+basically, we need to test functionality of `lexer`, `parser`
+
 ## 
